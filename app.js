@@ -4,23 +4,26 @@ const bodyParser = require('body-parser');
 
 const path = require('path');
 
+const get404Controller = require('./controllers/error');
 
 const app = express();
 
-const adminRoutes = require('./routes/admin');
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+
+const adminRouts = require('./routes/admin');
 
 const shopRoutes = require('./routes/shop');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/admin', adminRoutes);
+app.use('/admin', adminRouts);
 
 app.use(shopRoutes);
 
-app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
-});
+app.use('/', get404Controller.get404);
 
 app.listen(3000);
